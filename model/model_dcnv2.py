@@ -5,7 +5,7 @@ import torch.nn as nn
 from scipy.stats import truncnorm
 import math
 
-from model.dcn_v2 import dcn_v2_conv
+from torchvision.ops import deform_conv2d
 
 
 def Conv1x1(in_planes, out_planes, stride=1):
@@ -226,9 +226,9 @@ class Post_process_deconv(nn.Module, ABC):
         else:
             weight = weight / torch.sum(weight, 1).unsqueeze(1).expand_as(weight)
 
-        output = dcn_v2_conv.apply(
-            depth, offset, weight, self.w, self.b, self.stride, self.padding,
-            self.dilation, self.deformable_groups)
+        output = deform_conv2d(
+            depth, offset, weight=self.w, bias=self.b, stride=self.stride,
+            padding=self.padding, dilation=self.dilation, mask=weight)
 
         if self.dkn_residual:
             output = output + depth
@@ -308,11 +308,9 @@ class Model(nn.Module, ABC):
         self._initialize_weights()
 
 
-    def forward(self, sample):
 
-        depth = sample['dep']
-        img, lidar = sample['rgb'], sample['ip']
-        d_clear = sample['dep_clear']
+    def forward(self, depth, img, lidar, d_clear):
+
         if self.args.depth_norm:
             bz = lidar.shape[0]
             self.dep_max = torch.max(lidar.view(bz,-1),1, keepdim=False)[0].view(bz,1,1,1)
@@ -404,9 +402,8 @@ class Model(nn.Module, ABC):
         if self.args.depth_norm:
             depth_predictions = [i * self.dep_max for i in depth_predictions]
 
-        output = {'results': depth_predictions}
 
-        return output
+        return depth_predictions
 
     def _make_layer(self, block, planes, blocks, stride=1):
         norm_layer = self._norm_layer
