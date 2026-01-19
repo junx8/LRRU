@@ -93,7 +93,7 @@ cfg.test_not_random_crop = False
 cfg.wandb_id_test = ''
 cfg.test_dir = ''
 cfg.test_model = ''
-cfg.save_test_image = False
+cfg.save_test_image = True
 
 # Training
 cfg.prob = 1.0

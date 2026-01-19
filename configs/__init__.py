@@ -7,12 +7,13 @@ def get(arg=None):
     module = import_module(module_name)
     get_config = getattr(module, config_name)
     cfg = get_config()
-
     if arg is not None:
         cfg.defrost()
         cfg.merge_from_file('configs/' + arg.configuration)
         cfg.num_gpus = len(cfg.gpus)
         cfg.project_name = arg.project_name
+        cfg.model_path = arg.model_path
+        cfg.device = arg.device
         cfg.freeze()
         args_config = cfg
     else:

@@ -8,7 +8,7 @@ cudnn_deterministic: False
 cudnn_benchmark: True
 
 # Dataset
-data_folder: '/home/temp_user/kitti_depth'
+data_folder: './kitti_depth'
 dataset: ['dep', 'gt', 'rgb']
 val: 'select'
 grid_spot: True
@@ -58,7 +58,7 @@ test_model: './pretrained/LRRU_Tiny/LRRU_Tiny.pt'
 
 # Summary
 num_summary: 6
-save_test_image: False
+save_test_image: True
 
 # Logs
 vis_step: 1000

@@ -61,25 +61,26 @@ def outlier_removal(lidar):
     # sparse_lidar = np.squeeze(lidar)
     threshold = 1.0
     sparse_lidar = lidar
-    valid_pixels = (sparse_lidar > 0.1).astype(np.float)
+    # valid_pixels = (sparse_lidar > 0.1).astype(np.float)
+    valid_pixels = (sparse_lidar > 0.1).astype(float)
 
     lidar_sum_7 = cv2.filter2D(sparse_lidar, -1, DIAMOND_KERNEL_7)
     lidar_count_7 = cv2.filter2D(valid_pixels, -1, DIAMOND_KERNEL_7)
 
     lidar_aveg_7 = lidar_sum_7 / (lidar_count_7 + 0.00001)
-    potential_outliers_7 = ((sparse_lidar - lidar_aveg_7) > threshold).astype(np.float)
+    potential_outliers_7 = ((sparse_lidar - lidar_aveg_7) > threshold).astype(float)
 
     lidar_sum_9 = cv2.filter2D(sparse_lidar, -1, DIAMOND_KERNEL_9)
     lidar_count_9 = cv2.filter2D(valid_pixels, -1, DIAMOND_KERNEL_9)
 
     lidar_aveg_9 = lidar_sum_9 / (lidar_count_9 + 0.00001)
-    potential_outliers_9 = ((sparse_lidar - lidar_aveg_9) > threshold).astype(np.float)
+    potential_outliers_9 = ((sparse_lidar - lidar_aveg_9) > threshold).astype(float)
 
     lidar_sum_13 = cv2.filter2D(sparse_lidar, -1, DIAMOND_KERNEL_13)
     lidar_count_13 = cv2.filter2D(valid_pixels, -1, DIAMOND_KERNEL_13)
 
     lidar_aveg_13 = lidar_sum_13 / (lidar_count_13 + 0.00001)
-    potential_outliers_13 = ((sparse_lidar - lidar_aveg_13) > threshold).astype(np.float)
+    potential_outliers_13 = ((sparse_lidar - lidar_aveg_13) > threshold).astype(float)
 
     potential_outliers = potential_outliers_7 + potential_outliers_9 + potential_outliers_13
     lidar_cleared = (sparse_lidar * (1 - potential_outliers)).astype(np.float32)
